@@ -7,7 +7,8 @@
   },
   "scripts": {
     "start": "node src/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build-TNA": "pkg src/index.js --targets node18-win,node18-macos,node18-linux --output TNA.exe --icon C:/Users/USER/Documents/ProJects/TUI/TNA/src/assets/imgs/favicon.ico"
   },
   "keywords": [],
   "author": "",
@@ -16,5 +17,11 @@
   "dependencies": {
     "sqlite3": "^5.1.7",
     "ytui": "file:.yalc/ytui"
+  },
+  "devDependencies": {
+    "jimp": "^1.6.0",
+    "pkg": "^5.8.1",
+    "png-to-ico": "^3.0.1",
+    "rcedit": "^4.0.1"
   }
 }
