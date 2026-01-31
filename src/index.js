@@ -1,21 +1,48 @@
-const { YTUIApp } = require('ytui');
-const { setupCommands } = require('./commands');
-const { createScreens } = require('./screens');
+#!/usr/bin/env node
+const readline = require('readline');
+const { handleCommand } = require('./commands');
+const { COLORS, getTheme } = require('./colors');
+const { themeManager } = require('ytui/src/theme');
 
-// Initialize TNA app
-const app = new YTUIApp('TNA - Terminal Notes App');
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+    prompt: '' // Set dynamically
+});
 
-// Replace default layout with TNA screens
-app.layout = createScreens(app.screen);
+const refreshPrompt = () => {
+    const THEME = getTheme();
+    rl.setPrompt(`${THEME.PROMPT}TNA>${COLORS.RESET} `);
+};
 
-// Setup commands
-setupCommands(app);
+(async () => {
+    // Wait for theme configuration to load from DB
+    await themeManager.init();
 
-// Initial refresh to show existing notes
-require('./commands').refreshNotes(app);
+    refreshPrompt();
+    const INITIAL_THEME = getTheme();
 
-// Optional: show command list in sidebar
-app.layout.sidebar.setContent('Commands:\n:new [text]\n:list\n:delete [id]\n:q to quit');
+    console.log(`${INITIAL_THEME.BANNER}
+  _______ _   _    _    
+ |__   __| \\ | |  / \\   
+    | |  |  \\| | / _ \\  
+    | |  | . \` |/ ___ \\ 
+    |_|  |_| \\_/_/   \\_\\
+${COLORS.RESET}`);
+    console.log(`${INITIAL_THEME.BODY}Terminal Notes App v1.0.0${COLORS.RESET}`);
+    console.log(`${INITIAL_THEME.ID}Powered By YTUI (https://github.com/YTUI)${COLORS.RESET}`);
+    console.log(`${INITIAL_THEME.ID}YTUI Powered by blessed${COLORS.RESET}\n`);
 
-// Start the app
-app.start();
+    rl.prompt();
+})();
+
+rl.on('line', (line) => {
+    handleCommand(line, (msg) => {
+        console.log(msg);
+    }, refreshPrompt); // Pass refresh callback
+    setTimeout(() => rl.prompt(), 100);
+
+}).on('close', () => {
+    console.log('Goodbye!');
+    process.exit(0);
+});

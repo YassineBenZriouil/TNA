@@ -15,24 +15,29 @@ const db = new sqlite3.Database(DB_PATH, (err) => {
     else console.log('TNA database initialized at', DB_PATH);
 });
 
-// Create table if not exists
+// Create table if not exists (migrating to include title)
 db.serialize(() => {
     db.run(`CREATE TABLE IF NOT EXISTS notes (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    content TEXT NOT NULL,
+    title TEXT,
+    body TEXT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
+
+    db.run(`ALTER TABLE notes ADD COLUMN title TEXT`, (err) => {
+        // ignore duplicate column error
+    });
 });
 
 // Functions to access DB
-function addNote(content, callback) {
-    db.run(`INSERT INTO notes (content) VALUES (?)`, [content], function (err) {
+function addNote(title, content, callback) {
+    db.run(`INSERT INTO notes (title, content) VALUES (?, ?)`, [title, content], function (err) {
         callback(err, this?.lastID);
     });
 }
 
 function getNotes(callback) {
-    db.all(`SELECT id, content, created_at FROM notes ORDER BY id`, [], callback);
+    db.all(`SELECT id, title, content, created_at FROM notes ORDER BY id`, [], callback);
 }
 
 function deleteNote(id, callback) {
