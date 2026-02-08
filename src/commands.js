@@ -7,7 +7,14 @@ function handleCommand(input, print, updatePrompt) {
     const THEME = getTheme();
     const args = input.trim().split(/\s+/);
 
-    const cmd = args[0];
+    let cmd = args[0];
+
+    // Handle stuck together commands like :delete[3]
+    const deleteMatch = cmd.match(/^:delete\[?(\d+)\]?$/);
+    if (deleteMatch) {
+        cmd = ':delete';
+        if (!args[1]) args[1] = deleteMatch[1];
+    }
 
     if (cmd === ':new') {
         // Matches :new "Title" "Body"
@@ -43,7 +50,18 @@ function handleCommand(input, print, updatePrompt) {
         });
     }
     else if (cmd === ':delete') {
-        const id = parseInt(args[1]);
+        let idStr = args[1];
+        if (!idStr) {
+            print(`${THEME.ERROR}Usage: :delete [id]${COLORS.RESET}`);
+            return;
+        }
+
+        // Remove surrounding brackets if present (e.g. from copy-pasting list output)
+        if (idStr.startsWith('[') && idStr.endsWith(']')) {
+            idStr = idStr.slice(1, -1);
+        }
+
+        const id = parseInt(idStr);
         if (isNaN(id)) {
             print(`${THEME.ERROR}Usage: :delete [id]${COLORS.RESET}`);
             return;
