@@ -30,8 +30,8 @@ const refreshPrompt = () => {
     |_|  |_| \\_/_/   \\_\\
 ${COLORS.RESET}`);
     console.log(`${INITIAL_THEME.BODY}Terminal Notes App v1.0.0${COLORS.RESET}`);
-    console.log(`${INITIAL_THEME.ID}Powered By YTUI (https://github.com/YTUI)${COLORS.RESET}`);
-    console.log(`${INITIAL_THEME.ID}YTUI Powered by blessed${COLORS.RESET}\n`);
+    console.log(`${INITIAL_THEME.ID}Powered By YTUI (https://github.com/YassineBenZriouil/YTUI)${COLORS.RESET}`);
+    console.log(`${INITIAL_THEME.ID}YTUI Powered by Node.js Blessed${COLORS.RESET}\n`);
 
     rl.prompt();
 })();
